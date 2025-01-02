@@ -50,9 +50,11 @@ const CricketAuctionPage = () => {
   };
 
   const updates = [
-    "Vinod Kumar sold to Pink Panthers for 8.50 LAC",
-    "Auction paused for a short break",
-    "Next player up for auction: Rajesh Sharma",
+    { message: "Vinod Lund SOLD TO Gangsters (5.00 Lac)", time: "1 month ago" },
+    { message: "Niraj Bajaj SOLD TO Gangsters (5.00 Lac)", time: "1 month ago" },
+    { message: "Samit Shukla SOLD TO Mumbai Titans (50000)", time: "1 month ago" },
+    { message: "Huzefa Saifee SOLD TO Pink Panthers (50000)", time: "1 month ago" },
+    { message: "Bhavesh Vora SOLD TO Pink Panthers (50000)", time: "1 month ago" },
   ];
 
   const soldPlayers = [
@@ -182,6 +184,7 @@ const CricketAuctionPage = () => {
       boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
       display: 'flex',
       justifyContent: 'center',
+      flexWrap: 'wrap',
     },
     tabButton: {
       padding: '12px 24px',
@@ -276,6 +279,49 @@ const CricketAuctionPage = () => {
       borderBottom: '1px solid #e5e7eb',
       fontSize: '14px',
       color: '#4b5563',
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+    updateTime: {
+      color: '#9ca3af',
+      fontSize: '12px',
+    },
+    '@media (max-width: 768px)': {
+      currentBidCard: {
+        gridTemplateColumns: '1fr',
+        textAlign: 'center',
+      },
+      playerImage: {
+        margin: '0 auto 16px',
+      },
+      currentBid: {
+        alignItems: 'center',
+      },
+      tabButton: {
+        marginRight: '8px',
+        marginBottom: '8px',
+      },
+      statsGrid: {
+        gridTemplateColumns: '1fr 1fr',
+      },
+      teamGrid: {
+        gridTemplateColumns: '1fr',
+      },
+    },
+    '@media (max-width: 480px)': {
+      playerName: {
+        fontSize: '24px',
+      },
+      bidAmount: {
+        fontSize: '28px',
+      },
+      tabButton: {
+        padding: '8px 16px',
+        fontSize: '14px',
+      },
+      statsGrid: {
+        gridTemplateColumns: '1fr',
+      },
     },
   };
 
@@ -380,7 +426,10 @@ const CricketAuctionPage = () => {
       </div>
       <div style={styles.cardContent}>
         {updates.map((update, index) => (
-          <div key={index} style={styles.updateItem}>{update}</div>
+          <div key={index} style={styles.updateItem}>
+            <span>{update.message}</span>
+            <span style={styles.updateTime}>{update.time}</span>
+          </div>
         ))}
       </div>
     </div>
@@ -389,7 +438,7 @@ const CricketAuctionPage = () => {
   const SoldPlayers = () => (
     <div style={styles.teamCard}>
       <div style={styles.cardHeader}>
-        <h2 style={styles.cardTitle}>Sold Players</h2>
+        <h2 style={styles.cardTitle}>Sold Players ({soldPlayers.length})</h2>
       </div>
       <div style={styles.cardContent}>
         <table style={styles.table}>
@@ -421,7 +470,7 @@ const CricketAuctionPage = () => {
   const UnsoldPlayers = () => (
     <div style={styles.teamCard}>
       <div style={styles.cardHeader}>
-        <h2 style={styles.cardTitle}>Unsold Players</h2>
+        <h2 style={styles.cardTitle}>Unsold Players ({unsoldPlayers.length})</h2>
       </div>
       <div style={styles.cardContent}>
         <table style={styles.table}>
@@ -451,7 +500,7 @@ const CricketAuctionPage = () => {
   const YetToAuctionPlayers = () => (
     <div style={styles.teamCard}>
       <div style={styles.cardHeader}>
-        <h2 style={styles.cardTitle}>Yet to Auction Players</h2>
+        <h2 style={styles.cardTitle}>Yet to Auction Players ({yetToAuctionPlayers.length})</h2>
       </div>
       <div style={styles.cardContent}>
         <table style={styles.table}>
@@ -500,7 +549,7 @@ const CricketAuctionPage = () => {
         </div>
 
         {activeTab === "Teams" && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '32px', ...styles.teamGrid }}>
             <TeamCard team={gangsters} />
             <TeamCard team={pinkPanthers} />
           </div>
