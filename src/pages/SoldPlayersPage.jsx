@@ -1,74 +1,113 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const SoldPlayersPage = () => {
-  const soldPlayers = [
-    { name: "Vinod Kumar", role: "All Rounder", team: "Pink Panthers", amount: "8.50 LAC" },
-    { name: "Rajesh Sharma", role: "Batter", team: "Gangsters", amount: "7.00 LAC" },
-  ];
+  const [soldPlayers, setSoldPlayers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const styles = {
-    container: {
-      background: 'white',
-      borderRadius: '16px',
-      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-      overflow: 'hidden',
-    },
-    header: {
-      padding: '24px',
-      borderBottom: '1px solid #e5e7eb',
-    },
-    title: {
-      fontSize: '24px',
-      fontWeight: '700',
-      color: '#1e40af',
-    },
-    content: {
-      padding: '24px',
-    },
-    table: {
-      width: '100%',
-      borderCollapse: 'collapse',
-    },
-    tableHeader: {
-      background: '#f3f4f6',
-      padding: '12px 16px',
-      textAlign: 'left',
-      fontSize: '14px',
-      fontWeight: '600',
-      color: '#4b5563',
-    },
-    tableCell: {
-      padding: '12px 16px',
-      borderBottom: '1px solid #e5e7eb',
-      fontSize: '14px',
-      color: '#4b5563',
-    },
-  };
+  useEffect(() => {
+    const fetchSoldPlayers = async () => {
+      try {
+        const response = await axios.get("https://sarvotar.io/items/Players");
+        const players = Array.isArray(response.data) ? response.data : response.data.data;
+
+        // Ensure players is an array before filtering
+        if (Array.isArray(players)) {
+          const sold = players.filter((player) => player.auction_station === "sold");
+          setSoldPlayers(sold);
+        } else {
+          throw new Error("Invalid players data format");
+        }
+      } catch (err) {
+        setError("Failed to fetch players data. Please try again.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSoldPlayers();
+  }, []);
+
+  if (loading) {
+    return <p>Loading sold players...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Sold Players ({soldPlayers.length})</h2>
-      </div>
-      <div style={styles.content}>
-        <table style={styles.table}>
+    <div className="players-page">
+      <style>{`
+        .players-page {
+          display: flex;
+          justify-content: center;
+          padding: 20px;
+        }
+
+        .players-card {
+          width: 100%;
+          max-width: 800px;
+          border: 1px solid #ddd;
+          border-radius: 10px;
+          padding: 20px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          background-color: #fff;
+        }
+
+        .players-title {
+          text-align: center;
+          font-size: 24px;
+          color: #333;
+          margin-bottom: 20px;
+        }
+
+        .players-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 10px;
+        }
+
+        .players-table th,
+        .players-table td {
+          text-align: left;
+          padding: 10px;
+          border: 1px solid #ddd;
+          font-size: 14px;
+        }
+
+        .players-table th {
+          background-color: #f9f9f9;
+          font-weight: bold;
+        }
+
+        .players-table tbody tr:nth-child(odd) {
+          background-color: #f9f9f9;
+        }
+      `}</style>
+
+      <div className="players-card">
+        <h2 className="players-title">Sold Players ({soldPlayers.length})</h2>
+        <table className="players-table">
           <thead>
             <tr>
-              <th style={styles.tableHeader}>#</th>
-              <th style={styles.tableHeader}>Player</th>
-              <th style={styles.tableHeader}>Role</th>
-              <th style={styles.tableHeader}>Team</th>
-              <th style={styles.tableHeader}>Amount</th>
+              <th>#</th>
+              <th>Player Name</th>
+              <th>Role</th>
+              <th>Team</th>
+              <th>Amount</th>
             </tr>
           </thead>
           <tbody>
             {soldPlayers.map((player, index) => (
-              <tr key={player.name} style={{ background: index % 2 === 0 ? '#f9fafb' : 'white' }}>
-                <td style={styles.tableCell}>{index + 1}</td>
-                <td style={styles.tableCell}>{player.name}</td>
-                <td style={styles.tableCell}>{player.role}</td>
-                <td style={styles.tableCell}>{player.team}</td>
-                <td style={styles.tableCell}>{player.amount}</td>
+              <tr key={player.id || index}>
+                <td>{index + 1}</td>
+                <td>{player.name}</td>
+                <td>{player.role}</td>
+                <td>{player.team}</td>
+                <td>{player.amount}</td>
               </tr>
             ))}
           </tbody>

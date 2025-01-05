@@ -74,11 +74,6 @@ const HomePage = () => {
           ))}
         </div>
       </div>
-
-      {/* Footer */}
-      {/* <footer className="bg-blue-800 text-white py-4 text-center mt-18">
-        <p className="text-sm">© 2023 Cricket Auction. All rights reserved.</p>
-      </footer> */}
     </div>
   );
 };

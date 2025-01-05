@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CurrentBidCard from './CurrentBidCard';
 import NavigationTabs from './NavigationTabs';
+import Footer from './Footer';
 
 const Layout = () => {
   const currentBid = {
@@ -70,9 +71,7 @@ const Layout = () => {
         <Outlet />
       </div>
 
-      <footer style={styles.footer}>
-        <p style={styles.footerText}>© 2023 Cricket Auction. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };
