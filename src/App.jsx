@@ -1,16 +1,23 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import CricketAuctionPage from "./pages/CricketAuctionPage";
-import FootballAuctionPage from "./pages/FootballAuctionPage";
+import Layout from "./components/Layout";
+import TeamsPage from "./pages/TeamsPage";
+import UpdatesPage from "./pages/UnsoldPlayersPage.jsx";
+import SoldPlayersPage from "./pages/SoldPlayersPage";
+import UnsoldPlayersPage from "./pages/UnsoldPlayersPage";
+import YetToAuctionPage from "./pages/YetToAuctionPage";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/cricket-auction" element={<CricketAuctionPage />} />
-        <Route path="/football-auction" element={<FootballAuctionPage />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<TeamsPage />} />
+          <Route path="/updates" element={<UpdatesPage />} />
+          <Route path="/sold-players" element={<SoldPlayersPage />} />
+          <Route path="/unsold-players" element={<UnsoldPlayersPage />} />
+          <Route path="/yet-to-auction" element={<YetToAuctionPage />} />
+        </Route>
       </Routes>
     </Router>
   );
