@@ -9,7 +9,7 @@ const YetToAuctionPage = () => {
   useEffect(() => {
     const fetchYetToAuctionPlayers = async () => {
       try {
-        const response = await axios.get("https://sarvotar.io/items/Players?limit=100000");
+        const response = await axios.get("https://server.sarvotar.io/items/Players?limit=100000");
         const players = response.data.data;
 
         // Filter players whose auction_status is "yet to auction"
@@ -113,7 +113,7 @@ const YetToAuctionPage = () => {
                 <td>
                   <img
                     className="player-photo"
-                    src={`https://sarvotar.io/assets/${player.photo}`}
+                    src={`https://server.sarvotar.io/assets/${player.photo}`}
                     alt={player.name}
                   />
                 </td>

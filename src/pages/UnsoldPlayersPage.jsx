@@ -9,7 +9,7 @@ const UnsoldPlayersPage = () => {
   useEffect(() => {
     const fetchUnsoldPlayers = async () => {
       try {
-        const response = await axios.get("https://sarvotar.io/items/Players?limit=100000");
+        const response = await axios.get("https://server.sarvotar.io/items/Players?limit=100000");
         const players = response.data.data;
 
         // Filter unsold players based on auction_status
@@ -115,7 +115,7 @@ const UnsoldPlayersPage = () => {
                 <td>
                   <img
                     className="player-photo"
-                    src={`https://sarvotar.io/assets/${player.photo}`}
+                    src={`https://server.sarvotar.io/assets/${player.photo}`}
                     alt={player.name}
                   />
                 </td>

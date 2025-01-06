@@ -11,12 +11,12 @@ const SoldPlayersPage = () => {
     const fetchSoldPlayersAndTeams = async () => {
       try {
         const response = await axios.get(
-          "https://sarvotar.io/items/Players?limit=100000"
+          "https://server.sarvotar.io/items/Players?limit=100000"
         );
         const players = response.data.data;
 
         // Fetch teams data separately if needed
-        const teamResponse = await axios.get("https://sarvotar.io/items/Teams");
+        const teamResponse = await axios.get("https://server.sarvotar.io/items/Teams");
         const teamsData = teamResponse.data.data;
 
         // Map team IDs to team names
@@ -139,7 +139,7 @@ const SoldPlayersPage = () => {
                 <td>
                   <img
                     className="player-photo"
-                    src={`https://sarvotar.io/assets/${player.photo}`}
+                    src={`https://server.sarvotar.io/assets/${player.photo}`}
                     alt={player.name}
                   />
                 </td>

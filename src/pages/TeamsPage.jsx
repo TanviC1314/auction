@@ -13,7 +13,7 @@ const TeamsPage = () => {
       try {
         // Fetch teams
         const teamResponse = await axios.get(
-          `https://sarvotar.io/items/Teams?limit=100000`
+          `https://server.sarvotar.io/items/Teams?limit=100000`
         );
         const fetchedTeams = teamResponse.data.data;
         setTeams(fetchedTeams);
@@ -22,7 +22,7 @@ const TeamsPage = () => {
         const playersData = {};
         for (const team of fetchedTeams) {
           const teamPlayersResponse = await axios.get(
-            `https://sarvotar.io/items/Players?filter[team][_eq]=${team.id}&limit=100000`
+            `https://server.sarvotar.io/items/Players?filter[team][_eq]=${team.id}&limit=100000`
           );
           playersData[team.id] = teamPlayersResponse.data.data;
         }
@@ -228,7 +228,7 @@ const TeamsPage = () => {
           <div className="team-card" key={team.id}>
             <img
               className="team-logo"
-              src={`https://sarvotar.io/assets/${team.team_logo}`}
+              src={`https://server.sarvotar.io/assets/${team.team_logo}`}
               alt={`${team.name} Logo`}
             />
             <h2 className="team-name">{team.name}</h2>
@@ -286,7 +286,7 @@ const TeamsPage = () => {
                       <td>
                         <img
                           className="player-image"
-                          src={`https://sarvotar.io/assets/${player.photo}`}
+                          src={`https://server.sarvotar.io/assets/${player.photo}`}
                           alt={player.name}
                         />
                       </td>
