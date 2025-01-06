@@ -54,6 +54,8 @@ const TeamsPage = () => {
     return <p>{error}</p>;
   }
 
+
+
   return (
     <div className="teams-page">
       <style>{`
