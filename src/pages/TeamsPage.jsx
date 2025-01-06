@@ -3,26 +3,30 @@ import axios from "axios";
 
 const TeamsPage = () => {
   const [teams, setTeams] = useState([]);
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  var teamPlayers = []
 
   // Fetch teams and players data
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch teams
-        // const fetchedTeams = [];
-        // for (let i = 1; i <= 9; i++) {
-          const teamResponse = await axios.get(`https://sarvotar.io/items/Teams`);
-          // const { id, name, owner_name, team_logo } = teamResponse.data;
-          const fetchedTeams=teamResponse.data.data        // }
+        const teamResponse = await axios.get(
+          `https://sarvotar.io/items/Teams?limit=100000`
+        );
+        const fetchedTeams = teamResponse.data.data;
         setTeams(fetchedTeams);
 
-        // Fetch players
-        const playersResponse = await axios.get("https://sarvotar.io/admin/content/Players");
-        setPlayers(playersResponse.data);
+        // Fetch players for each team
+        const playersData = {};
+        for (const team of fetchedTeams) {
+          const teamPlayersResponse = await axios.get(
+            `https://sarvotar.io/items/Players?filter[team][_eq]=${team.id}&limit=100000`
+          );
+          playersData[team.id] = teamPlayersResponse.data.data;
+        }
+        setPlayers(playersData);
       } catch (err) {
         setError("Failed to fetch data. Please try again.");
         console.error(err);
@@ -34,16 +38,41 @@ const TeamsPage = () => {
     fetchData();
   }, []);
 
-  // Filter players by team name
-  const getPlayersForTeam = async (teamid) => {
-    // if (!Array.isArray(players)) {
-    //   return [];
-    // }
-    const teamPlayersResponse = await axios.get(`https://sarvotar.io/items/Players?filter[team][_eq]=${teamid}`);
-    const teamPlayers = teamPlayersResponse.data.data;
-    // console.log(teamPlayers);
-    teamPlayers[teamid]=teamPlayers;
-    return teamPlayers;
+  // Function to calculate team statistics
+  const calculateTeamStats = (teamPlayers) => {
+    const totalPoints = 100000;
+    const requiredPlayers = 12;
+    const basePoint = 1000;
+
+    // Default values if no players exist
+    if (!Array.isArray(teamPlayers) || teamPlayers.length === 0) {
+      return {
+        pointsUsed: 0,
+        balancedPoints: totalPoints,
+        playersBought: 0,
+        maxBidAllowed: totalPoints - (requiredPlayers - 1) * basePoint,
+      };
+    }
+
+    // Calculate points used and remaining stats
+    const pointsUsed = teamPlayers.reduce(
+      (sum, player) => sum + (player.points || 0),
+      0
+    );
+    const balancedPoints = totalPoints - pointsUsed;
+    const playersBought = teamPlayers.length;
+
+    const maxBidAllowed =
+      playersBought < requiredPlayers
+        ? balancedPoints - (requiredPlayers - playersBought - 1) * basePoint
+        : 0;
+
+    return {
+      pointsUsed,
+      balancedPoints,
+      playersBought,
+      maxBidAllowed,
+    };
   };
 
   if (loading) {
@@ -53,8 +82,6 @@ const TeamsPage = () => {
   if (error) {
     return <p>{error}</p>;
   }
-
-
 
   return (
     <div className="teams-page">
@@ -133,6 +160,12 @@ const TeamsPage = () => {
           background-color: #f9f9f9;
         }
 
+        @media (max-width: 1024px) {
+          .team-card {
+            width: 48%;
+          }
+        }
+
         @media (max-width: 768px) {
           .teams-page {
             flex-direction: column;
@@ -141,19 +174,56 @@ const TeamsPage = () => {
 
           .team-card {
             width: 90%;
+            margin-bottom: 20px;
           }
 
           .team-info {
             flex-direction: column;
             align-items: flex-start;
           }
+
+          .team-table th,
+          .team-table td {
+            font-size: 12px;
+          }
+
+          .team-logo {
+            height: 60px;
+          }
+
+          .player-image {
+            height: 60px;
+          }
         }
+
+        @media (max-width: 480px) {
+          .team-name {
+            font-size: 20px;
+          }
+
+          .team-info p {
+            font-size: 12px;
+          }
+        }
+          @media (max-width: 768px) {
+            .team-info-cell {
+              display: block;
+              width: 100%;
+              margin-bottom: 10px;
+            }
+
+            .team-info-cell p {
+              margin: 0;
+            }
+          }
+
       `}</style>
 
-      {teams.map((team,i) => {
-        // console.log(team.id);
-        teamPlayers = getPlayersForTeam(team.id);
-        // console.log(teamPlayers);
+      {teams.map((team) => {
+        const teamPlayers = players[team.id] || [];
+        const { pointsUsed, balancedPoints, playersBought, maxBidAllowed } =
+          calculateTeamStats(teamPlayers);
+
         return (
           <div className="team-card" key={team.id}>
             <img
@@ -164,43 +234,67 @@ const TeamsPage = () => {
             <h2 className="team-name">{team.name}</h2>
             <div className="team-info">
               <table>
-          <tr>
-            <td colSpan="4" ><strong>Owner:</strong> {team.owner_name}</td>
-          </tr>
-          <tr>
-            <td><p><strong>Total Points:</strong> 1.00 CR</p></td>
-            <td><p><strong>Points Used:</strong> 94.90 LAC</p></td>
-            <td><p><strong>Balance Points:</strong> 5.10 LAC</p></td>
-            <td><p><strong>Players Bought:</strong> 18/18</p></td>
-          </tr>
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
+                    <strong>Owner:</strong> {team.owner_name}
+                    <hr />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="team-info-cell">
+                    <p>
+                      <strong>Total Points:</strong> 100,000
+                    </p>
+                  </td>
+                  <td className="team-info-cell">
+                    <p>
+                      <strong>Points Used:</strong> {pointsUsed}
+                    </p>
+                  </td>
+                  <td className="team-info-cell">
+                    <p>
+                      <strong>Balance Points:</strong> {balancedPoints}
+                    </p>
+                  </td>
+                  <td className="team-info-cell">
+                    <p>
+                      <strong>Players Bought:</strong> {playersBought}/12
+                    </p>
+                  </td>
+                  <td className="team-info-cell">
+                    <p>
+                      <strong>Max Bid Allowed:</strong> {maxBidAllowed}
+                    </p>
+                  </td>
+                </tr>
               </table>
             </div>
             {teamPlayers.length > 0 ? (
               <table className="team-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Player Image</th>
-              <th>Player Name</th>
-              <th>Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            {teamPlayers.map((player, index) => (
-              <tr key={player.id}>
-                <td>{index + 1}</td>
-                <td>
-            <img
-              className="player-image"
-              src={`https://sarvotar.io/assets/${player.photo}`}
-              alt={player.name}
-            />
-                </td>
-                <td>{player.name}</td>
-                <td>{player.price}</td>
-              </tr>
-            ))}
-          </tbody>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Player Image</th>
+                    <th>Player Name</th>
+                    <th>Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teamPlayers.map((player, index) => (
+                    <tr key={player.id}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <img
+                          className="player-image"
+                          src={`https://sarvotar.io/assets/${player.photo}`}
+                          alt={player.name}
+                        />
+                      </td>
+                      <td>{player.name}</td>
+                      <td>{player.points}</td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             ) : (
               <p>No players available for this team.</p>

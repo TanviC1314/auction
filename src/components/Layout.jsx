@@ -45,7 +45,7 @@ const Layout = () => {
     },
     logo: {
       height: '56px',
-      filter: 'brightness(0) invert(1)',
+      filter: 'brightness(1) invert(0)',
       transition: 'transform 0.2s',
       cursor: 'pointer',
     },
@@ -56,7 +56,7 @@ const Layout = () => {
       <header style={styles.header}>
         <div style={styles.headerContainer}>
           <img
-            src="/api/placeholder/56/56"
+            src="GGF.png"
             alt="TPA Logo"
             style={styles.logo}
             className="hover:scale-105"

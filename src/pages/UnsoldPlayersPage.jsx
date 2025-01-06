@@ -9,12 +9,12 @@ const UnsoldPlayersPage = () => {
   useEffect(() => {
     const fetchUnsoldPlayers = async () => {
       try {
-        const response = await axios.get("https://sarvotar.io/items/Players");
-        const players = Array.isArray(response.data) ? response.data : response.data.data;
+        const response = await axios.get("https://sarvotar.io/items/Players?limit=100000");
+        const players = response.data.data;
 
-        // Filter unsold players based on auction_station
+        // Filter unsold players based on auction_status
         if (Array.isArray(players)) {
-          const unsold = players.filter((player) => player.auction_station === "unsold");
+            const unsold = players.filter((player) => player.auction_status.toLowerCase() === "unsold");
           setUnsoldPlayers(unsold);
         } else {
           throw new Error("Invalid players data format");
@@ -86,6 +86,14 @@ const UnsoldPlayersPage = () => {
         .players-table tbody tr:nth-child(odd) {
           background-color: #f9f9f9;
         }
+
+        .player-photo {
+          height: 80px;
+          width: 80px;
+          object-fit: contain;
+          margin: 0 auto;
+          display: block;
+        }
       `}</style>
 
       <div className="players-card">
@@ -95,8 +103,8 @@ const UnsoldPlayersPage = () => {
             <tr>
               <th>#</th>
               <th>Player Name</th>
-              <th>Role</th>
-              <th>Base Price</th>
+              <th>Photo</th>
+              <th>Points</th>
             </tr>
           </thead>
           <tbody>
@@ -104,8 +112,14 @@ const UnsoldPlayersPage = () => {
               <tr key={player.id || index}>
                 <td>{index + 1}</td>
                 <td>{player.name}</td>
-                <td>{player.role}</td>
-                <td>{player.base_price || "N/A"}</td>
+                <td>
+                  <img
+                    className="player-photo"
+                    src={`https://sarvotar.io/assets/${player.photo}`}
+                    alt={player.name}
+                  />
+                </td>
+                <td>{player.points || "N/A"}</td>
               </tr>
             ))}
           </tbody>

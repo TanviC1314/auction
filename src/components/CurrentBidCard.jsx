@@ -22,6 +22,7 @@ const CurrentBidCard = ({ bid }) => {
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           max-width: 600px;
           width: 100%;
+          margin-bottom: 20px;
         }
 
         .bid-card-header {
@@ -31,13 +32,14 @@ const CurrentBidCard = ({ bid }) => {
           margin-bottom: 20px;
         }
 
-        .player-image {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          object-fit: cover;
+        .player-image-currentbid {
+          width: 80px; /* Fixed width */
+          height: 80px; /* Fixed height */
+          border-radius: 50%; /* Circular crop */
+          object-fit: cover; /* Ensures the image covers the area without stretching */
           margin-right: 20px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          overflow: hidden; /* Ensures any overflowing part of the image is hidden */
         }
 
         .player-info {
@@ -79,7 +81,7 @@ const CurrentBidCard = ({ bid }) => {
             padding: 16px;
           }
 
-          .player-image {
+          .player-image-currentbid {
             width: 60px;
             height: 60px;
             margin-right: 16px;
@@ -104,7 +106,7 @@ const CurrentBidCard = ({ bid }) => {
             align-items: center;
           }
 
-          .player-image {
+          .player-image-currentbid {
             margin-bottom: 10px;
           }
 
@@ -120,19 +122,16 @@ const CurrentBidCard = ({ bid }) => {
             <img
               src={bid.imageUrl}
               alt={bid.playerName}
-              className="player-image"
+              className="player-image-currentbid"
             />
             <div className="player-info">
               <div className="player-name">{bid.playerName}</div>
               <div className="player-details">Age: {bid.age}</div>
-              <div className="player-details">
-                {bid.role} • {bid.team}
-              </div>
             </div>
           </div>
           <div className="price-info">
-            <div className="current-amount">{bid.currentAmount.replace("LAC", "Kitty")}</div>
-            <div className="base-price">Base Price: {bid.basePrice.replace("LAC", "Kitty")}</div>
+            <div className="current-amount">Base Points: {bid.points}</div>
+            {/* <div className="base-price">Base Points: {bid.points}</div> */}
           </div>
         </div>
       </div>
@@ -141,43 +140,35 @@ const CurrentBidCard = ({ bid }) => {
 };
 
 const CurrentBid = () => {
-  const [currentBid, setCurrentBid] = useState(null);
+  const [currentBids, setCurrentBids] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [auctionStatus, setAuctionStatus] = useState("");
 
   useEffect(() => {
-    const fetchCurrentBid = async () => {
+    const fetchCurrentBids = async () => {
       try {
-        const response = await axios.get("https://sarvotar.io/items/Players");
-        const players = Array.isArray(response.data) ? response.data : response.data.data;
+        const response = await axios.get("https://sarvotar.io/items/Players?limit=100000");
+        const players = response.data.data;
 
-        if (Array.isArray(players)) {
-          // Check if auction is ongoing
-          const ongoingAuctionPlayers = players.filter(
-            (player) => player.auction_station === "ongoing auction"
+        // Filter players whose auction_status is "ongoing auction"
+        const ongoingAuctionPlayers = players.filter(
+          (player) => player.auction_status.toLowerCase() === "ongoing auction"
+        );
+
+        if (ongoingAuctionPlayers.length > 0) {
+          setCurrentBids(
+            ongoingAuctionPlayers.map((player) => ({
+              playerName: player.name,
+              imageUrl: `https://sarvotar.io/assets/${player.photo}`,
+              age: player.age || "N/A",
+              currentAmount: player.current_bid || "0 Kitty",
+              points: player.points || "N/A",
+            }))
           );
-
-          if (ongoingAuctionPlayers.length > 0) {
-            const highestBid = ongoingAuctionPlayers.reduce((prev, curr) =>
-              parseFloat(curr.current_bid || 0) > parseFloat(prev.current_bid || 0) ? curr : prev
-            );
-
-            setCurrentBid({
-              playerName: highestBid.name,
-              imageUrl: `https://sarvotar.io/assets/${highestBid.player_logo}`,
-              age: highestBid.age || "N/A",
-              role: highestBid.role || "N/A",
-              team: highestBid.team || "N/A",
-              currentAmount: highestBid.current_bid || "0 Kitty",
-              basePrice: highestBid.base_price || "N/A",
-            });
-            setAuctionStatus("ongoing");
-          } else {
-            setAuctionStatus("no ongoing auction");
-          }
+          setAuctionStatus("ongoing");
         } else {
-          throw new Error("Invalid data format");
+          setAuctionStatus("no ongoing auction");
         }
       } catch (err) {
         setError("Failed to fetch current bid data. Please try again.");
@@ -187,11 +178,11 @@ const CurrentBid = () => {
       }
     };
 
-    fetchCurrentBid();
+    fetchCurrentBids();
   }, []);
 
   if (loading) {
-    return <p>Loading current bid...</p>;
+    return <p>Loading current bids...</p>;
   }
 
   if (error) {
@@ -202,11 +193,26 @@ const CurrentBid = () => {
     return <p>No ongoing auction at the moment.</p>;
   }
 
-  if (!currentBid) {
+  if (!currentBids.length) {
     return <p>No bid data available.</p>;
   }
 
-  return <CurrentBidCard bid={currentBid} />;
+  return (
+    <div style={{ backgroundColor: "#f9fafb"}}>
+      <h2 style={{
+        fontSize: '2rem',
+        fontWeight: '700',
+        color: '#1e40af',
+        textAlign: 'center',
+        marginBottom: '1.5rem'
+      }}>
+        Ongoing Auction
+      </h2>
+      {currentBids.map((bid, index) => (
+        <CurrentBidCard key={index} bid={bid} />
+      ))}
+    </div>
+  );
 };
 
 export default CurrentBid;
