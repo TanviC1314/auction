@@ -1,136 +1,90 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const CurrentBidCard = ({ bid }) => {
+const CurrentBidCard = ({ bid, isDesktop, onClick }) => {
   return (
-    <div className="bid-card-container">
+    <div
+      className="bid-card-container"
+      onClick={isDesktop ? onClick : undefined} // Only assign onClick if isDesktop is true
+      style={isDesktop ? { cursor: "pointer" } : {}}
+    >
       <style>{`
-  .bid-card-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-
-  .bid-card {
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 1;
-
-    /* Border properties with rotating linear gradient */
-    border: 4px solid;
-    border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
-    border-image-slice: 1;
-    animation: rotateBorder 5s linear infinite;
-  }
-
-  @keyframes rotateBorder {
-    0% {
-      border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
-    }
-    100% {
-      border-image-source: linear-gradient(405deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
-    }
-  }
-
-  .bid-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .player-image-currentbid {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-
-  .player-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-  }
-
-  .player-name {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1e40af;
-  }
-
-  .player-details {
-    font-size: 14px;
-    color: #6b7280;
-  }
-
-  .price-info {
-    text-align: right;
-  }
-
-  .current-amount {
-    font-size: 28px;
-    font-weight: 800;
-    color: #10b981;
-  }
-
-  .base-price {
-    font-size: 16px;
-    color: #6b7280;
-    margin-top: 8px;
-  }
-
-  @media (max-width: 768px) {
-    .bid-card {
-      padding: 16px;
-    }
-
-    .player-image-currentbid {
-      width: 60px;
-      height: 60px;
-      margin-right: 16px;
-    }
-
-    .player-name {
-      font-size: 18px;
-    }
-
-    .current-amount {
-      font-size: 24px;
-    }
-
-    .base-price {
-      font-size: 14px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .bid-card-header {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .player-image-currentbid {
-      margin-bottom: 10px;
-    }
-
-    .price-info {
-      text-align: center;
-    }
-  }
-`}</style>
+        .bid-card-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+        }
+        .bid-card {
+          display: flex;
+          flex-direction: column;
+          background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          max-width: 600px;
+          width: 100%;
+          margin-bottom: 20px;
+          position: relative;
+          z-index: 1;
+          border: 4px solid;
+          border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
+          border-image-slice: 1;
+          animation: rotateBorder 5s linear infinite;
+        }
+        @keyframes rotateBorder {
+          0% {
+            border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
+          }
+          100% {
+            border-image-source: linear-gradient(405deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
+          }
+        }
+        .bid-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+        .player-image-currentbid {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 20px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+        }
+        .player-info {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          flex: 1;
+        }
+        .player-name {
+          font-size: 20px;
+          font-weight: 700;
+          color: #1e40af;
+        }
+        .player-details {
+          font-size: 14px;
+          color: #6b7280;
+        }
+        .price-info {
+          text-align: right;
+        }
+        .current-amount {
+          font-size: 28px;
+          font-weight: 800;
+          color: #10b981;
+        }
+        .base-price {
+          font-size: 16px;
+          color: #6b7280;
+          margin-top: 8px;
+        }
+      `}</style>
 
       <div className="bid-card">
         <div className="bid-card-header">
@@ -147,7 +101,6 @@ const CurrentBidCard = ({ bid }) => {
           </div>
           <div className="price-info">
             <div className="current-amount">Base Points: {bid.points}</div>
-            {/* <div className="base-price">Base Points: {bid.points}</div> */}
           </div>
         </div>
       </div>
@@ -160,6 +113,20 @@ const CurrentBid = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [auctionStatus, setAuctionStatus] = useState("");
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+  const navigate = useNavigate();
+
+  // Handle screen resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchCurrentBids = async () => {
@@ -175,6 +142,7 @@ const CurrentBid = () => {
         if (ongoingAuctionPlayers.length > 0) {
           setCurrentBids(
             ongoingAuctionPlayers.map((player) => ({
+              playerId: player.id,
               playerName: player.name,
               imageUrl: `https://server.sarvotar.io/assets/${player.photo}`,
               age: player.age || "N/A",
@@ -206,7 +174,17 @@ const CurrentBid = () => {
   }
 
   if (auctionStatus === "no ongoing auction") {
-    return <p style={{background:'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)', color:'white', textAlign:'center'}}>No ongoing auction player at the moment.</p>;
+    return (
+      <p
+        style={{
+          background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
+          color: "white",
+          textAlign: "center",
+        }}
+      >
+        No ongoing auction player at the moment.
+      </p>
+    );
   }
 
   if (!currentBids.length) {
@@ -214,18 +192,29 @@ const CurrentBid = () => {
   }
 
   return (
-    <div style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)"}}>
-      <h2 style={{
-        fontSize: '2rem',
-        fontWeight: '700',
-        color: '#fff',
-        textAlign: 'center',
-        marginBottom: '1.5rem'
-      }}>
+    <div
+      style={{
+        background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
+      }}
+    >
+      <h2
+        style={{
+          fontSize: "2rem",
+          fontWeight: "700",
+          color: "#fff",
+          textAlign: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
         Ongoing Auction
       </h2>
       {currentBids.map((bid, index) => (
-        <CurrentBidCard key={index} bid={bid} />
+        <CurrentBidCard
+          key={index}
+          bid={bid}
+          isDesktop={isDesktop}
+          onClick={() => navigate(`/player?PlayerId=${bid.playerId}`)}
+        />
       ))}
     </div>
   );
