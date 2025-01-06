@@ -107,7 +107,7 @@ const SoldPlayersPage = () => {
   }
 
   .players-table td {
-    vertical-align: middle;
+    vertical-align: middle !important;
   }
 
   .player-photo {
