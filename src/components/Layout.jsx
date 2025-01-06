@@ -50,7 +50,7 @@ const Layout = () => {
     },
     content: {
       flex: 1,
-      maxWidth: '1200px',
+      // maxWidth: '1200px',
       margin: '0 auto',
       padding: '16px',
     },
