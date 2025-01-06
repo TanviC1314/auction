@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import CurrentBidCard from './CurrentBidCard';
 import NavigationTabs from './NavigationTabs';
 import Footer from './Footer';
@@ -18,22 +18,13 @@ const Layout = () => {
 
   const styles = {
     header: {
-      background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+      background: '#fff',
+      color: '#1e3a8a',
       padding: '16px 0',
-      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
       position: 'sticky',
       top: 0,
       zIndex: 1000,
-    },
-    footer: {
-      background: '#1e40af',
-      color: 'white',
-      padding: '16px 0',
-      textAlign: 'center',
-    },
-    footerText: {
-      margin: 0,
-      fontSize: '14px',
     },
     headerContainer: {
       maxWidth: '1400px',
@@ -45,32 +36,59 @@ const Layout = () => {
     },
     logo: {
       height: '56px',
-      filter: 'brightness(1) invert(0)',
-      transition: 'transform 0.2s',
       cursor: 'pointer',
+      transition: 'transform 0.3s',
+    },
+    logoHover: {
+      transform: 'scale(1.1)',
+    },
+    title: {
+      fontSize: '1.8rem',
+      fontWeight: 'bold',
+      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+      margin: 0,
+    },
+    content: {
+      flex: 1,
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '16px',
     },
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {/* Header */}
       <header style={styles.header}>
         <div style={styles.headerContainer}>
           <img
-            src="GGF.png"
-            alt="TPA Logo"
+            src="GGF.png" // Ensure this logo has a transparent background
+            alt="GGF Logo"
             style={styles.logo}
-            className="hover:scale-105"
+            onMouseOver={(e) => (e.target.style.transform = styles.logoHover.transform)}
+            onMouseOut={(e) => (e.target.style.transform = 'scale(1)')}
+          />
+          <h1 style={styles.title}>Maa Ambe Cup - Season 5</h1>
+          <img
+            src="MaaAmbeCupLogo.jpg" // Ensure this logo has a transparent background
+            alt="Maa Ambe Cup Logo"
+            style={styles.logo}
+            onMouseOver={(e) => (e.target.style.transform = styles.logoHover.transform)}
+            onMouseOut={(e) => (e.target.style.transform = 'scale(1)')}
           />
         </div>
       </header>
 
+      {/* Current Bid Card */}
       <CurrentBidCard bid={currentBid} />
 
-      <div className="flex-1 max-w-7xl mx-auto px-6 pb-8">
+      {/* Main Content */}
+      <div style={styles.content}>
         <NavigationTabs />
         <Outlet />
       </div>
 
+      {/* Footer */}
       <Footer />
     </div>
   );

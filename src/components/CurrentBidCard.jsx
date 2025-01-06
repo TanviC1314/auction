@@ -5,116 +5,132 @@ const CurrentBidCard = ({ bid }) => {
   return (
     <div className="bid-card-container">
       <style>{`
-        .bid-card-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 20px;
-          background-color: #f9fafb;
-        }
+  .bid-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
 
-        .bid-card {
-          display: flex;
-          flex-direction: column;
-          background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          max-width: 600px;
-          width: 100%;
-          margin-bottom: 20px;
-        }
+  .bid-card {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
 
-        .bid-card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
+    /* Border properties with rotating linear gradient */
+    border: 4px solid;
+    border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
+    border-image-slice: 1;
+    animation: rotateBorder 5s linear infinite;
+  }
 
-        .player-image-currentbid {
-          width: 80px; /* Fixed width */
-          height: 80px; /* Fixed height */
-          border-radius: 50%; /* Circular crop */
-          object-fit: cover; /* Ensures the image covers the area without stretching */
-          margin-right: 20px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          overflow: hidden; /* Ensures any overflowing part of the image is hidden */
-        }
+  @keyframes rotateBorder {
+    0% {
+      border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
+    }
+    100% {
+      border-image-source: linear-gradient(405deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
+    }
+  }
 
-        .player-info {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-          flex: 1;
-        }
+  .bid-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
 
-        .player-name {
-          font-size: 20px;
-          font-weight: 700;
-          color: #1e40af;
-        }
+  .player-image-currentbid {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
 
-        .player-details {
-          font-size: 14px;
-          color: #6b7280;
-        }
+  .player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
 
-        .price-info {
-          text-align: right;
-        }
+  .player-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e40af;
+  }
 
-        .current-amount {
-          font-size: 28px;
-          font-weight: 800;
-          color: #10b981;
-        }
+  .player-details {
+    font-size: 14px;
+    color: #6b7280;
+  }
 
-        .base-price {
-          font-size: 16px;
-          color: #6b7280;
-          margin-top: 8px;
-        }
+  .price-info {
+    text-align: right;
+  }
 
-        @media (max-width: 768px) {
-          .bid-card {
-            padding: 16px;
-          }
+  .current-amount {
+    font-size: 28px;
+    font-weight: 800;
+    color: #10b981;
+  }
 
-          .player-image-currentbid {
-            width: 60px;
-            height: 60px;
-            margin-right: 16px;
-          }
+  .base-price {
+    font-size: 16px;
+    color: #6b7280;
+    margin-top: 8px;
+  }
 
-          .player-name {
-            font-size: 18px;
-          }
+  @media (max-width: 768px) {
+    .bid-card {
+      padding: 16px;
+    }
 
-          .current-amount {
-            font-size: 24px;
-          }
+    .player-image-currentbid {
+      width: 60px;
+      height: 60px;
+      margin-right: 16px;
+    }
 
-          .base-price {
-            font-size: 14px;
-          }
-        }
+    .player-name {
+      font-size: 18px;
+    }
 
-        @media (max-width: 480px) {
-          .bid-card-header {
-            flex-direction: column;
-            align-items: center;
-          }
+    .current-amount {
+      font-size: 24px;
+    }
 
-          .player-image-currentbid {
-            margin-bottom: 10px;
-          }
+    .base-price {
+      font-size: 14px;
+    }
+  }
 
-          .price-info {
-            text-align: center;
-          }
-        }
-      `}</style>
+  @media (max-width: 480px) {
+    .bid-card-header {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .player-image-currentbid {
+      margin-bottom: 10px;
+    }
+
+    .price-info {
+      text-align: center;
+    }
+  }
+`}</style>
 
       <div className="bid-card">
         <div className="bid-card-header">
@@ -190,7 +206,7 @@ const CurrentBid = () => {
   }
 
   if (auctionStatus === "no ongoing auction") {
-    return <p>No ongoing auction at the moment.</p>;
+    return <p style={{background:'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)', color:'white', textAlign:'center'}}>No ongoing auction player at the moment.</p>;
   }
 
   if (!currentBids.length) {
@@ -198,11 +214,11 @@ const CurrentBid = () => {
   }
 
   return (
-    <div style={{ backgroundColor: "#f9fafb"}}>
+    <div style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)"}}>
       <h2 style={{
         fontSize: '2rem',
         fontWeight: '700',
-        color: '#1e40af',
+        color: '#fff',
         textAlign: 'center',
         marginBottom: '1.5rem'
       }}>
