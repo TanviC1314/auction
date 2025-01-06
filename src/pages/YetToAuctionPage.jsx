@@ -9,18 +9,14 @@ const YetToAuctionPage = () => {
   useEffect(() => {
     const fetchYetToAuctionPlayers = async () => {
       try {
-        const response = await axios.get("https://sarvotar.io/items/Players");
-        const players = Array.isArray(response.data) ? response.data : response.data.data;
+        const response = await axios.get("https://sarvotar.io/items/Players?limit=100000");
+        const players = response.data.data;
 
-        // Filter players whose auction_station is "yet to auction"
-        if (Array.isArray(players)) {
-          const yetToAuction = players.filter(
-            (player) => player.auction_station === "yet to auction"
-          );
-          setYetToAuctionPlayers(yetToAuction);
-        } else {
-          throw new Error("Invalid players data format");
-        }
+        // Filter players whose auction_status is "yet to auction"
+        const yetToAuction = players.filter(
+          (player) => player.auction_status.toLowerCase() === "yet to be auctioned"
+        );
+        setYetToAuctionPlayers(yetToAuction);
       } catch (err) {
         setError("Failed to fetch players data. Please try again.");
         console.error(err);
@@ -88,6 +84,14 @@ const YetToAuctionPage = () => {
         .players-table tbody tr:nth-child(odd) {
           background-color: #f9f9f9;
         }
+
+        .player-photo {
+          height: 80px;
+          width: 80px;
+          object-fit: contain;
+          margin: 0 auto;
+          display: block;
+        }
       `}</style>
 
       <div className="players-card">
@@ -97,8 +101,8 @@ const YetToAuctionPage = () => {
             <tr>
               <th>#</th>
               <th>Player Name</th>
-              <th>Role</th>
-              <th>Base Price</th>
+              <th>Photo</th>
+              <th>Base Points</th>
             </tr>
           </thead>
           <tbody>
@@ -106,8 +110,14 @@ const YetToAuctionPage = () => {
               <tr key={player.id || index}>
                 <td>{index + 1}</td>
                 <td>{player.name}</td>
-                <td>{player.role}</td>
-                <td>{player.base_price || "N/A"}</td>
+                <td>
+                  <img
+                    className="player-photo"
+                    src={`https://sarvotar.io/assets/${player.photo}`}
+                    alt={player.name}
+                  />
+                </td>
+                <td>{player.points || "N/A"}</td>
               </tr>
             ))}
           </tbody>

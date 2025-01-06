@@ -1,5 +1,5 @@
 // HomePage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { sampleData } from '../data/sampleData';
 import CurrentBidCard from '../components/CurrentBidCard';
@@ -11,7 +11,7 @@ const HomePage = () => {
     // Set initial active tab based on current route
     const pathToTab = {
       '/': 'Teams',
-      '/updates': 'Updates',
+      // '/updates': 'Updates',
       '/sold-players': 'Sold Players',
       '/unsold-players': 'Unsold Players',
       '/yet-to-auction': 'Yet to auction Players'
@@ -24,7 +24,7 @@ const HomePage = () => {
     setActiveTab(tab);
     const tabToPath = {
       'Teams': '/',
-      'Updates': '/updates',
+      // 'Updates': '/updates',
       'Sold Players': '/sold-players',
       'Unsold Players': '/unsold-players',
       'Yet to auction Players': '/yet-to-auction'
@@ -32,13 +32,22 @@ const HomePage = () => {
     navigate(tabToPath[tab]);
   };
 
+  // Auto refresh every 10 minutes (600000 ms)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      window.location.reload();
+    }, 600000); // 600000 ms = 10 minutes
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-800 to-blue-500 p-4 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <img 
-            src="/api/placeholder/56/56" 
+            src="GGF.png" 
             alt="TPA Logo" 
             className="h-14 brightness-0 invert cursor-pointer transition-transform hover:scale-105"
             onClick={() => navigate('/')}
@@ -55,7 +64,7 @@ const HomePage = () => {
         <div className="bg-white rounded-xl p-4 mb-6 shadow-sm flex justify-center flex-wrap">
           {[
             "Teams",
-            "Updates",
+            // "Updates",
             "Sold Players",
             "Unsold Players",
             "Yet to auction Players"
