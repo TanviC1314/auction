@@ -26,6 +26,7 @@ const App = () => {
           <Route path="/unsold-players" element={<UnsoldPlayersPage />} />
           <Route path="/yet-to-auction" element={<YetToAuctionPage />} />
         </Route>
+        <Route path="/player" element={<UpdatesPage />} />
       </Routes>
     </Router>
   );
