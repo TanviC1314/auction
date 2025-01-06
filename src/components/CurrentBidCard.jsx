@@ -164,7 +164,7 @@ const CurrentBid = () => {
   useEffect(() => {
     const fetchCurrentBids = async () => {
       try {
-        const response = await axios.get("https://sarvotar.io/items/Players?limit=100000");
+        const response = await axios.get("https://server.sarvotar.io/items/Players?limit=100000");
         const players = response.data.data;
 
         // Filter players whose auction_status is "ongoing auction"
@@ -176,7 +176,7 @@ const CurrentBid = () => {
           setCurrentBids(
             ongoingAuctionPlayers.map((player) => ({
               playerName: player.name,
-              imageUrl: `https://sarvotar.io/assets/${player.photo}`,
+              imageUrl: `https://server.sarvotar.io/assets/${player.photo}`,
               age: player.age || "N/A",
               currentAmount: player.current_bid || "0 Kitty",
               points: player.points || "N/A",
