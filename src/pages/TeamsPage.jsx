@@ -6,19 +6,19 @@ const TeamsPage = () => {
   const [players, setPlayers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlayerImage, setSelectedPlayerImage] = useState("");
 
   // Fetch teams and players data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch teams
         const teamResponse = await axios.get(
           `https://server.sarvotar.io/items/Teams?limit=100000`
         );
         const fetchedTeams = teamResponse.data.data;
         setTeams(fetchedTeams);
 
-        // Fetch players for each team
         const playersData = {};
         for (const team of fetchedTeams) {
           const teamPlayersResponse = await axios.get(
@@ -38,13 +38,11 @@ const TeamsPage = () => {
     fetchData();
   }, []);
 
-  // Function to calculate team statistics
   const calculateTeamStats = (teamPlayers) => {
     const totalPoints = 300000;
     const requiredPlayers = 12;
     const basePoint = 1000;
 
-    // Default values if no players exist
     if (!Array.isArray(teamPlayers) || teamPlayers.length === 0) {
       return {
         totalPoints: totalPoints,
@@ -55,7 +53,6 @@ const TeamsPage = () => {
       };
     }
 
-    // Calculate points used and remaining stats
     const pointsUsed = teamPlayers.reduce(
       (sum, player) => sum + (player.points || 0),
       0
@@ -75,6 +72,16 @@ const TeamsPage = () => {
       playersBought,
       maxBidAllowed,
     };
+  };
+
+  const openModal = (image) => {
+    setSelectedPlayerImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlayerImage("");
   };
 
   if (loading) {
@@ -137,6 +144,7 @@ const TeamsPage = () => {
           height: 80px;
           width: auto;
           object-fit: contain;
+          cursor: pointer;
         }
 
         .team-table {
@@ -162,7 +170,33 @@ const TeamsPage = () => {
           background-color: #f9f9f9;
         }
 
-        @media (max-width: 1024px) {
+        .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background-color: white;
+          padding: 2px;
+          max-width: 90%;
+          max-height: 80%;
+        }
+
+        .modal img {
+          width: 100%;
+          max-width: 600px;
+          height: auto;
+          object-fit: contain;
+        }
+          @media (max-width: 1024px) {
           .team-card {
             width: 48%;
           }
@@ -218,7 +252,7 @@ const TeamsPage = () => {
               margin: 0;
             }
           }
-
+            
       `}</style>
 
       {teams.map((team) => {
@@ -234,14 +268,11 @@ const TeamsPage = () => {
               alt={`${team.name} Logo`}
             />
             <h2 className="team-name">{team.name}</h2>
+            <h4 className="text-center mb-2 text-xs sm:text-base">
+              <strong>Owner:</strong> {team.owner_name}
+            </h4>
             <div className="team-info">
               <table>
-                <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
-                    <strong>Owner:</strong> {team.owner_name}
-                    <hr />
-                  </td>
-                </tr>
                 <tr>
                   <td className="team-info-cell">
                     <p>
@@ -290,6 +321,7 @@ const TeamsPage = () => {
                           className="player-image"
                           src={`https://server.sarvotar.io/assets/${player.photo}`}
                           alt={player.name}
+                          onClick={() => openModal(`https://server.sarvotar.io/assets/${player.photo}`)}
                         />
                       </td>
                       <td>{player.name}</td>
@@ -299,11 +331,19 @@ const TeamsPage = () => {
                 </tbody>
               </table>
             ) : (
-              <p>No players available for this team.</p>
+              <p>No players found for this team.</p>
             )}
           </div>
         );
       })}
+
+      {isModalOpen && (
+        <div className="modal" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedPlayerImage} alt="Player" style={{maxHeight:'70vh', maxWidth:'70vw'}} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

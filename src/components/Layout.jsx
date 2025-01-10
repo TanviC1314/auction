@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import CurrentBidCard from './CurrentBidCard';
 import NavigationTabs from './NavigationTabs';
 import Footer from './Footer';
+import TitleSponsor from './TitleSponser';
 
 const Layout = () => {
   const currentBid = {
@@ -56,7 +57,7 @@ const Layout = () => {
       flex: 1,
       // maxWidth: '1200px',
       margin: '0 auto',
-      padding: '16px',
+      // padding: '16px',
     },
   };
 
@@ -101,6 +102,8 @@ const Layout = () => {
     </div>
   </div>
 </header>
+
+<TitleSponsor />
 
 
         {/* Current Bid Card */}
