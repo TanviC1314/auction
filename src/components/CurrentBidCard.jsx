@@ -3,10 +3,18 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const CurrentBidCard = ({ bid, isDesktop, onClick }) => {
+  const [isImagePopped, setIsImagePopped] = useState(false);
+
+  const handleImageClick = () => {
+    if (!isDesktop) {
+      setIsImagePopped((prev) => !prev);
+    }
+  };
+
   return (
     <div
       className="bid-card-container"
-      onClick={isDesktop ? onClick : undefined} // Only assign onClick if isDesktop is true
+      onClick={isDesktop ? onClick : undefined}
       style={isDesktop ? { cursor: "pointer" } : {}}
     >
       <style>{`
@@ -46,17 +54,44 @@ const CurrentBidCard = ({ bid, isDesktop, onClick }) => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 20px;
+          flex-wrap: wrap;
         }
         .player-image-currentbid {
           width: 80px;
           height: 80px;
           border-radius: 50%;
-          object-fit: cover;
+          object-fit: contain;
           margin-right: 20px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
+          cursor: pointer;
         }
-        .player-info {
+        .player-image-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+  border: 4px solid;
+  border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47ff00, #00ffea, #2b65ff, #8000ff, #ff0080);
+  border-image-slice: 1;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.player-image-popup img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+        }
+.player-info {
           display: flex;
           flex-direction: column;
           gap: 4px;
@@ -73,6 +108,7 @@ const CurrentBidCard = ({ bid, isDesktop, onClick }) => {
         }
         .price-info {
           text-align: right;
+          margin-top: 10px; /* Add spacing on smaller screens */
         }
         .current-amount {
           font-size: 28px;
@@ -84,15 +120,32 @@ const CurrentBidCard = ({ bid, isDesktop, onClick }) => {
           color: #6b7280;
           margin-top: 8px;
         }
+        @media (max-width: 768px) {
+          .bid-card {
+            flex-direction: column;
+          }
+          .bid-card-header {
+            flex-direction: column; /* Stack elements */
+            align-items: center; /* Center items */
+          }
+          .player-image-currentbid {
+            margin-right: 0;
+            margin-bottom: 10px;
+          }
+            .price-info {
+            text-align: center; /* Center align text */
+          }
+        }
       `}</style>
 
       <div className="bid-card">
         <div className="bid-card-header">
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
             <img
               src={bid.imageUrl}
               alt={bid.playerName}
               className="player-image-currentbid"
+              onClick={handleImageClick}
             />
             <div className="player-info">
               <div className="player-name">{bid.playerName}</div>
@@ -104,9 +157,17 @@ const CurrentBidCard = ({ bid, isDesktop, onClick }) => {
           </div>
         </div>
       </div>
+
+      {isImagePopped && (
+  <div className="player-image-popup" onClick={handleImageClick}>
+    <img src={bid.imageUrl} alt={bid.playerName} />
+  </div>
+)}
+
     </div>
   );
 };
+
 
 const CurrentBid = () => {
   const [currentBids, setCurrentBids] = useState([]);
@@ -175,15 +236,20 @@ const CurrentBid = () => {
 
   if (auctionStatus === "no ongoing auction") {
     return (
-      <p
-        style={{
-          background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
-          color: "white",
-          textAlign: "center",
-        }}
+      <div
+      style={{
+        background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
+        color: "white",
+        textAlign: "center",
+        height: "20vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        fontSize: "1 rem",
+      }}
       >
-        No ongoing auction player at the moment.
-      </p>
+      Auction will start soon. Stay tuned!
+      </div>
     );
   }
 

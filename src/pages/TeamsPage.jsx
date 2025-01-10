@@ -6,19 +6,21 @@ const TeamsPage = () => {
   const [players, setPlayers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
+  const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
+  const [selectedPlayerImage, setSelectedPlayerImage] = useState("");
+  const [selectedOwnerImage, setSelectedOwnerImage] = useState("");
 
   // Fetch teams and players data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch teams
         const teamResponse = await axios.get(
           `https://server.sarvotar.io/items/Teams?limit=100000`
         );
         const fetchedTeams = teamResponse.data.data;
         setTeams(fetchedTeams);
 
-        // Fetch players for each team
         const playersData = {};
         for (const team of fetchedTeams) {
           const teamPlayersResponse = await axios.get(
@@ -38,15 +40,14 @@ const TeamsPage = () => {
     fetchData();
   }, []);
 
-  // Function to calculate team statistics
   const calculateTeamStats = (teamPlayers) => {
-    const totalPoints = 100000;
+    const totalPoints = 300000;
     const requiredPlayers = 12;
     const basePoint = 1000;
 
-    // Default values if no players exist
     if (!Array.isArray(teamPlayers) || teamPlayers.length === 0) {
       return {
+        totalPoints: totalPoints,
         pointsUsed: 0,
         balancedPoints: totalPoints,
         playersBought: 0,
@@ -54,7 +55,6 @@ const TeamsPage = () => {
       };
     }
 
-    // Calculate points used and remaining stats
     const pointsUsed = teamPlayers.reduce(
       (sum, player) => sum + (player.points || 0),
       0
@@ -68,11 +68,32 @@ const TeamsPage = () => {
         : 0;
 
     return {
+      totalPoints,
       pointsUsed,
       balancedPoints,
       playersBought,
       maxBidAllowed,
     };
+  };
+
+  const openPlayerModal = (image) => {
+    setSelectedPlayerImage(image);
+    setIsPlayerModalOpen(true);
+  };
+
+  const closePlayerModal = () => {
+    setIsPlayerModalOpen(false);
+    setSelectedPlayerImage("");
+  };
+
+  const openOwnerModal = (image) => {
+    setSelectedOwnerImage(image);
+    setIsOwnerModalOpen(true);
+  };
+
+  const closeOwnerModal = () => {
+    setIsOwnerModalOpen(false);
+    setSelectedOwnerImage("");
   };
 
   if (loading) {
@@ -101,6 +122,28 @@ const TeamsPage = () => {
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
           background-color: #fff;
           margin-bottom: 20px;
+          position: relative;
+        }
+
+        .team-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+
+        .team-logo {
+          height: 100px;
+          object-fit: contain;
+          cursor: pointer;
+        }
+
+        .team-owner-photo {
+          height: 100px;
+          width: 100px;
+          object-fit: contain;
+          border-radius: 10%;
+          cursor: pointer;
         }
 
         .team-name {
@@ -128,13 +171,13 @@ const TeamsPage = () => {
           padding: 5px 10px;
         }
 
-        .team-logo,
         .player-image {
           display: block;
           margin: 0 auto 10px;
           height: 80px;
           width: auto;
           object-fit: contain;
+          cursor: pointer;
         }
 
         .team-table {
@@ -158,6 +201,33 @@ const TeamsPage = () => {
 
         .team-table tbody tr:nth-child(odd) {
           background-color: #f9f9f9;
+        }
+
+        .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background-color: white;
+          padding: 2px;
+          max-width: 90%;
+          max-height: 80%;
+        }
+
+        .modal img {
+          width: 100%;
+          max-width: 600px;
+          height: auto;
+          object-fit: contain;
         }
 
         @media (max-width: 1024px) {
@@ -187,10 +257,6 @@ const TeamsPage = () => {
             font-size: 12px;
           }
 
-          .team-logo {
-            height: 60px;
-          }
-
           .player-image {
             height: 60px;
           }
@@ -205,45 +271,50 @@ const TeamsPage = () => {
             font-size: 12px;
           }
         }
-          @media (max-width: 768px) {
-            .team-info-cell {
-              display: block;
-              width: 100%;
-              margin-bottom: 10px;
-            }
 
-            .team-info-cell p {
-              margin: 0;
-            }
+        @media (max-width: 768px) {
+          .team-info-cell {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
           }
 
+          .team-info-cell p {
+            margin: 0;
+          }
+        }
       `}</style>
 
       {teams.map((team) => {
         const teamPlayers = players[team.id] || [];
-        const { pointsUsed, balancedPoints, playersBought, maxBidAllowed } =
+        const { totalPoints, pointsUsed, balancedPoints, playersBought, maxBidAllowed } =
           calculateTeamStats(teamPlayers);
 
         return (
           <div className="team-card" key={team.id}>
-            <img
-              className="team-logo"
-              src={`https://server.sarvotar.io/assets/${team.team_logo}`}
-              alt={`${team.name} Logo`}
-            />
+            <div className="team-header">
+              <img
+                className="team-logo"
+                src={`https://server.sarvotar.io/assets/${team.team_logo}`}
+                alt={`${team.name} Logo`}
+              />
+              <img
+                className="team-owner-photo"
+                src={`https://server.sarvotar.io/assets/${team.owner_photo}`}
+                alt={`Owner of ${team.name}`}
+                onClick={() => openOwnerModal(`https://server.sarvotar.io/assets/${team.owner_photo}`)}
+              />
+            </div>
             <h2 className="team-name">{team.name}</h2>
+            <h4 className="text-center mb-2 text-xs sm:text-base">
+              <strong>Owner:</strong> {team.owner_name}
+            </h4>
             <div className="team-info">
               <table>
                 <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
-                    <strong>Owner:</strong> {team.owner_name}
-                    <hr />
-                  </td>
-                </tr>
-                <tr>
                   <td className="team-info-cell">
                     <p>
-                      <strong>Total Points:</strong> 100,000
+                      <strong>Total Points:</strong> {totalPoints}
                     </p>
                   </td>
                   <td className="team-info-cell">
@@ -288,6 +359,9 @@ const TeamsPage = () => {
                           className="player-image"
                           src={`https://server.sarvotar.io/assets/${player.photo}`}
                           alt={player.name}
+                          onClick={() =>
+                            openPlayerModal(`https://server.sarvotar.io/assets/${player.photo}`)
+                          }
                         />
                       </td>
                       <td>{player.name}</td>
@@ -297,11 +371,27 @@ const TeamsPage = () => {
                 </tbody>
               </table>
             ) : (
-              <p>No players available for this team.</p>
+              <p>No players found for this team.</p>
             )}
           </div>
         );
       })}
+
+      {isOwnerModalOpen && (
+        <div className="modal" onClick={closeOwnerModal}>
+          <div className="modal-content">
+            <img src={selectedOwnerImage} alt="Owner" style={{maxHeight:'70vh', maxWidth:'70vw'}}/>
+          </div>
+        </div>
+      )}
+
+      {isPlayerModalOpen && (
+        <div className="modal" onClick={closePlayerModal}>
+          <div className="modal-content">
+            <img src={selectedPlayerImage} alt="Player" style={{maxHeight:'70vh', maxWidth:'70vw'}} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

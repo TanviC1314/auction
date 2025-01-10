@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import CurrentBidCard from './CurrentBidCard';
 import NavigationTabs from './NavigationTabs';
 import Footer from './Footer';
+import TitleSponsor from './TitleSponser';
 
 const Layout = () => {
   const currentBid = {
@@ -48,38 +49,64 @@ const Layout = () => {
       textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
       margin: 0,
     },
+    '@media (max-width: 768px)': {
+    title: {
+      fontSize: '1rem', // Reduced size for small devices
+    },},
     content: {
       flex: 1,
       // maxWidth: '1200px',
       margin: '0 auto',
-      padding: '16px',
+      // padding: '16px',
     },
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* Header */}
-      <header style={styles.header}>
-        <div style={styles.headerContainer}>
-          <img
-            src="GGF.png" // Ensure this logo has a transparent background
-            alt="GGF Logo"
-            style={styles.logo}
-            onMouseOver={(e) => (e.target.style.transform = styles.logoHover.transform)}
-            onMouseOut={(e) => (e.target.style.transform = 'scale(1)')}
-          />
-          <h1 style={styles.title}>Maa Ambe Cup - Season 5</h1>
-          <img
-            src="MaaAmbeCupLogo.jpg" // Ensure this logo has a transparent background
-            alt="Maa Ambe Cup Logo"
-            style={styles.logo}
-            onMouseOver={(e) => (e.target.style.transform = styles.logoHover.transform)}
-            onMouseOut={(e) => (e.target.style.transform = 'scale(1)')}
-          />
-        </div>
-      </header>
+        <header style={styles.header}>
+  <div style={styles.headerContainer}>
+    {/* Left Section: GGF Logo */}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <img
+        src="GGF.png"
+        alt="GGF Logo"
+        style={styles.logo}
+        onMouseOver={(e) => (e.target.style.transform = styles.logoHover.transform)}
+        onMouseOut={(e) => (e.target.style.transform = 'scale(1)')}
+      />
+      <p style={{ margin: '8px 0 0', fontWeight: 'bold', fontSize: '14px', textAlign:'center' }}>Godhra Graduates Forum</p>
+    </div>
 
-      {/* Current Bid Card */}
+    {/* Middle Section: Title and Logo */}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <img
+        src="MaaAmbeCupLogo.jpg"
+        alt="Maa Ambe Cup Logo"
+        style={styles.logo}
+        onMouseOver={(e) => (e.target.style.transform = styles.logoHover.transform)}
+        onMouseOut={(e) => (e.target.style.transform = 'scale(1)')}
+      />
+      <h1 className='text-lg font-bold text-center md:text-2xl'>Maa Ambe Cup - Season 5</h1>
+    </div>
+
+    {/* Right Section: GCS Logo */}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <img
+        src="GCS.png"
+        alt="Godhra Sports Club"
+        style={styles.logo}
+        onMouseOver={(e) => (e.target.style.transform = styles.logoHover.transform)}
+        onMouseOut={(e) => (e.target.style.transform = 'scale(1)')}
+      />
+      <p style={{ margin: '8px 0 0', fontWeight: 'bold', fontSize: '14px', textAlign:'center' }}>Godhra Sports Club</p>
+    </div>
+  </div>
+</header>
+
+<TitleSponsor />
+
+
+        {/* Current Bid Card */}
       <CurrentBidCard bid={currentBid} />
 
       {/* Main Content */}
