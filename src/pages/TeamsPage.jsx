@@ -6,8 +6,10 @@ const TeamsPage = () => {
   const [players, setPlayers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
+  const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
   const [selectedPlayerImage, setSelectedPlayerImage] = useState("");
+  const [selectedOwnerImage, setSelectedOwnerImage] = useState("");
 
   // Fetch teams and players data
   useEffect(() => {
@@ -74,14 +76,24 @@ const TeamsPage = () => {
     };
   };
 
-  const openModal = (image) => {
+  const openPlayerModal = (image) => {
     setSelectedPlayerImage(image);
-    setIsModalOpen(true);
+    setIsPlayerModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closePlayerModal = () => {
+    setIsPlayerModalOpen(false);
     setSelectedPlayerImage("");
+  };
+
+  const openOwnerModal = (image) => {
+    setSelectedOwnerImage(image);
+    setIsOwnerModalOpen(true);
+  };
+
+  const closeOwnerModal = () => {
+    setIsOwnerModalOpen(false);
+    setSelectedOwnerImage("");
   };
 
   if (loading) {
@@ -110,6 +122,28 @@ const TeamsPage = () => {
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
           background-color: #fff;
           margin-bottom: 20px;
+          position: relative;
+        }
+
+        .team-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+
+        .team-logo {
+          height: 100px;
+          object-fit: contain;
+          cursor: pointer;
+        }
+
+        .team-owner-photo {
+          height: 100px;
+          width: 100px;
+          object-fit: contain;
+          border-radius: 10%;
+          cursor: pointer;
         }
 
         .team-name {
@@ -137,7 +171,6 @@ const TeamsPage = () => {
           padding: 5px 10px;
         }
 
-        .team-logo,
         .player-image {
           display: block;
           margin: 0 auto 10px;
@@ -196,7 +229,8 @@ const TeamsPage = () => {
           height: auto;
           object-fit: contain;
         }
-          @media (max-width: 1024px) {
+
+        @media (max-width: 1024px) {
           .team-card {
             width: 48%;
           }
@@ -223,10 +257,6 @@ const TeamsPage = () => {
             font-size: 12px;
           }
 
-          .team-logo {
-            height: 60px;
-          }
-
           .player-image {
             height: 60px;
           }
@@ -241,18 +271,18 @@ const TeamsPage = () => {
             font-size: 12px;
           }
         }
-          @media (max-width: 768px) {
-            .team-info-cell {
-              display: block;
-              width: 100%;
-              margin-bottom: 10px;
-            }
 
-            .team-info-cell p {
-              margin: 0;
-            }
+        @media (max-width: 768px) {
+          .team-info-cell {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
           }
-            
+
+          .team-info-cell p {
+            margin: 0;
+          }
+        }
       `}</style>
 
       {teams.map((team) => {
@@ -262,11 +292,19 @@ const TeamsPage = () => {
 
         return (
           <div className="team-card" key={team.id}>
-            <img
-              className="team-logo"
-              src={`https://server.sarvotar.io/assets/${team.team_logo}`}
-              alt={`${team.name} Logo`}
-            />
+            <div className="team-header">
+              <img
+                className="team-logo"
+                src={`https://server.sarvotar.io/assets/${team.team_logo}`}
+                alt={`${team.name} Logo`}
+              />
+              <img
+                className="team-owner-photo"
+                src={`https://server.sarvotar.io/assets/${team.owner_photo}`}
+                alt={`Owner of ${team.name}`}
+                onClick={() => openOwnerModal(`https://server.sarvotar.io/assets/${team.owner_photo}`)}
+              />
+            </div>
             <h2 className="team-name">{team.name}</h2>
             <h4 className="text-center mb-2 text-xs sm:text-base">
               <strong>Owner:</strong> {team.owner_name}
@@ -321,7 +359,9 @@ const TeamsPage = () => {
                           className="player-image"
                           src={`https://server.sarvotar.io/assets/${player.photo}`}
                           alt={player.name}
-                          onClick={() => openModal(`https://server.sarvotar.io/assets/${player.photo}`)}
+                          onClick={() =>
+                            openPlayerModal(`https://server.sarvotar.io/assets/${player.photo}`)
+                          }
                         />
                       </td>
                       <td>{player.name}</td>
@@ -337,9 +377,17 @@ const TeamsPage = () => {
         );
       })}
 
-      {isModalOpen && (
-        <div className="modal" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      {isOwnerModalOpen && (
+        <div className="modal" onClick={closeOwnerModal}>
+          <div className="modal-content">
+            <img src={selectedOwnerImage} alt="Owner" style={{maxHeight:'70vh', maxWidth:'70vw'}}/>
+          </div>
+        </div>
+      )}
+
+      {isPlayerModalOpen && (
+        <div className="modal" onClick={closePlayerModal}>
+          <div className="modal-content">
             <img src={selectedPlayerImage} alt="Player" style={{maxHeight:'70vh', maxWidth:'70vw'}} />
           </div>
         </div>
