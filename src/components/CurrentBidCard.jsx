@@ -51,7 +51,7 @@ const CurrentBidCard = ({ bid, isDesktop, onClick }) => {
           width: 80px;
           height: 80px;
           border-radius: 50%;
-          object-fit: cover;
+          object-fit: contain;
           margin-right: 20px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           overflow: hidden;
@@ -175,15 +175,20 @@ const CurrentBid = () => {
 
   if (auctionStatus === "no ongoing auction") {
     return (
-      <p
-        style={{
-          background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
-          color: "white",
-          textAlign: "center",
-        }}
+      <div
+      style={{
+        background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
+        color: "white",
+        textAlign: "center",
+        height: "20vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        fontSize: "1 rem",
+      }}
       >
-        No ongoing auction player at the moment.
-      </p>
+      Auction will start soon. Stay tuned!
+      </div>
     );
   }
 

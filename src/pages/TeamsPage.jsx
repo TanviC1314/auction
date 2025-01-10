@@ -40,13 +40,14 @@ const TeamsPage = () => {
 
   // Function to calculate team statistics
   const calculateTeamStats = (teamPlayers) => {
-    const totalPoints = 100000;
+    const totalPoints = 300000;
     const requiredPlayers = 12;
     const basePoint = 1000;
 
     // Default values if no players exist
     if (!Array.isArray(teamPlayers) || teamPlayers.length === 0) {
       return {
+        totalPoints: totalPoints,
         pointsUsed: 0,
         balancedPoints: totalPoints,
         playersBought: 0,
@@ -68,6 +69,7 @@ const TeamsPage = () => {
         : 0;
 
     return {
+      totalPoints,
       pointsUsed,
       balancedPoints,
       playersBought,
@@ -221,7 +223,7 @@ const TeamsPage = () => {
 
       {teams.map((team) => {
         const teamPlayers = players[team.id] || [];
-        const { pointsUsed, balancedPoints, playersBought, maxBidAllowed } =
+        const { totalPoints, pointsUsed, balancedPoints, playersBought, maxBidAllowed } =
           calculateTeamStats(teamPlayers);
 
         return (
@@ -243,7 +245,7 @@ const TeamsPage = () => {
                 <tr>
                   <td className="team-info-cell">
                     <p>
-                      <strong>Total Points:</strong> 100,000
+                      <strong>Total Points:</strong> {totalPoints}
                     </p>
                   </td>
                   <td className="team-info-cell">
