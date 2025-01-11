@@ -278,7 +278,7 @@ const CurrentBid = () => {
         <CurrentBidCard
           key={index}
           bid={bid}
-          isDesktop={isDesktop}
+          isDesktop={true}
           onClick={() => navigate(`/player?PlayerId=${bid.playerId}`)}
         />
       ))}

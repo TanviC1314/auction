@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import CurrentBidCard from './CurrentBidCard';
 import NavigationTabs from './NavigationTabs';
@@ -6,6 +6,14 @@ import Footer from './Footer';
 import TitleSponsor from './TitleSponser';
 
 const Layout = () => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      window.location.reload();
+    }, 300000); // Refresh every 5 minutes (300,000 ms)
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, []);
   const currentBid = {
     playerName: "Vinod Kumar",
     currentAmount: "8.50 LAC",
