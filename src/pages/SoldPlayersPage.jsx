@@ -11,7 +11,7 @@ const SoldPlayersPage = () => {
     const fetchSoldPlayersAndTeams = async () => {
       try {
         const response = await axios.get(
-          "https://server.sarvotar.io/items/Players?limit=100000"
+          "https://server.sarvotar.io/items/Players?limit=100000&sort=-id"
         );
         const players = response.data.data;
 
