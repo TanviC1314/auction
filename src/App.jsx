@@ -8,15 +8,6 @@ import UnsoldPlayersPage from "./pages/UnsoldPlayersPage";
 import YetToAuctionPage from "./pages/YetToAuctionPage";
 
 const App = () => {
-  useEffect(() => {
-    const interval = setInterval(() => {
-      window.location.reload();
-    }, 300000); // Refresh every 5 minutes (300,000 ms)
-
-    // Cleanup the interval when the component unmounts
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <Router>
       <Routes>

@@ -298,17 +298,21 @@ const TeamsPage = () => {
                 src={`https://server.sarvotar.io/assets/${team.team_logo}`}
                 alt={`${team.name} Logo`}
               />
+              <div className="justify-items-center text-xs sm:text-base">
+                <p className="text-base sm:text-lg">Team Owner</p>
               <img
                 className="team-owner-photo"
                 src={`https://server.sarvotar.io/assets/${team.owner_photo}`}
                 alt={`Owner of ${team.name}`}
                 onClick={() => openOwnerModal(`https://server.sarvotar.io/assets/${team.owner_photo}`)}
               />
+              <p className="text-center">{team.Owner_person}</p>
+              </div>
             </div>
-            <h2 className="team-name">{team.name}</h2>
-            <h4 className="text-center mb-2 text-xs sm:text-base">
-              <strong>Owner:</strong> {team.owner_name}
+            <h4 className="text-center mb-4 text-xs sm:text-base">
+              ({team.owner_name})
             </h4>
+            <h2 className="team-name">{team.name}</h2>
             <div className="team-info">
               <table>
                 <tr>
