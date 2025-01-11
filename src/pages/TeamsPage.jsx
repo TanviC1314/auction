@@ -24,7 +24,7 @@ const TeamsPage = () => {
         const playersData = {};
         for (const team of fetchedTeams) {
           const teamPlayersResponse = await axios.get(
-            `https://server.sarvotar.io/items/Players?filter[team][_eq]=${team.id}&limit=100000`
+            `https://server.sarvotar.io/items/Players?filter[team][_eq]=${team.id}&limit=100000&sort=-id`
           );
           playersData[team.id] = teamPlayersResponse.data.data;
         }
